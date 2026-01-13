@@ -1,0 +1,153 @@
+databaseChangeLog:
+  - changeSet:
+      id: 001_create-table-users
+      author: ibnrasalfakih
+      sqlFile:
+        path: 001_create-table-users.sql
+        relativeToChangelogFile: true
+        splitStatements: false
+        stripComments: false
+
+  - changeSet:
+      id: 002_create-table-user-profiles
+      author: ibnrasalfakih
+      sqlFile:
+        path: 002_create-table-user-profiles.sql
+        relativeToChangelogFile: true
+        splitStatements: false
+        stripComments: false
+
+  - changeSet:
+      id: 003_create-table-friends
+      author: ibnrasalfakih
+      sqlFile:
+        path: 003_create-table-friends.sql
+        relativeToChangelogFile: true
+        splitStatements: false
+        stripComments: false
+
+  - changeSet:
+      id: 004_create-table-user-socials
+      author: ibnrasalfakih
+      sqlFile:
+        path: 004_create-table-user-socials.sql
+        relativeToChangelogFile: true
+        splitStatements: false
+        stripComments: false
+
+  - changeSet:
+      id: 005_create-table-events
+      author: ibnrasalfakih
+      sqlFile:
+        path: 005_create-table-events.sql
+        relativeToChangelogFile: true
+        splitStatements: false
+        stripComments: false
+
+  - changeSet:
+      id: 006_create-table-user-reviews
+      author: ibnrasalfakih
+      sqlFile:
+        path: 006_create-table-user-reviews.sql
+        relativeToChangelogFile: true
+        splitStatements: false
+        stripComments: false
+
+  - changeSet:
+      id: 007_create-table-event-s3
+      author: ibnrasalfakih
+      sqlFile:
+        path: 007_create-table-event-s3.sql
+        relativeToChangelogFile: true
+        splitStatements: false
+        stripComments: false
+
+  - changeSet:
+      id: 008_create-table-event-members
+      author: ibnrasalfakih
+      sqlFile:
+        path: 008_create-table-event-members.sql
+        relativeToChangelogFile: true
+        splitStatements: false
+        stripComments: false
+
+  - changeSet:
+      id: 009_create-table-event-comments
+      author: ibnrasalfakih
+      sqlFile:
+        path: 009_create-table-event-comments.sql
+        relativeToChangelogFile: true
+        splitStatements: false
+        stripComments: false
+
+  - changeSet:
+      id: 010_create-table-event-comment-s3
+      author: ibnrasalfakih
+      sqlFile:
+        path: 010_create-table-event-comment-s3.sql
+        relativeToChangelogFile: true
+        splitStatements: false
+        stripComments: false
+
+  - changeSet:
+      id: 011_create-table-user-review-s3
+      author: ibnrasalfakih
+      sqlFile:
+        path: 011_create-table-user-review-s3.sql
+        relativeToChangelogFile: true
+        splitStatements: false
+        stripComments: false
+
+  - changeSet:
+      id: 012_create-table-notifications
+      author: ibnrasalfakih
+      sqlFile:
+        path: 012_create-table-notifications.sql
+        relativeToChangelogFile: true
+        splitStatements: false
+        stripComments: false
+
+  - changeSet:
+      id: 013_create-table-posts
+      author: ibnrasalfakih
+      sqlFile:
+        path: 013_create-table-posts.sql
+        relativeToChangelogFile: true
+        splitStatements: false
+        stripComments: false
+
+  - changeSet:
+      id: 014_create-table-post-s3
+      author: ibnrasalfakih
+      sqlFile:
+        path: 014_create-table-post-s3.sql
+        relativeToChangelogFile: true
+        splitStatements: false
+        stripComments: false
+
+  - changeSet:
+      id: 015_create-table-post-likes
+      author: ibnrasalfakih
+      sqlFile:
+        path: 015_create-table-post-likes.sql
+        relativeToChangelogFile: true
+        splitStatements: false
+        stripComments: false
+
+  - changeSet:
+      id: 016_create-table-post-comments
+      author: ibnrasalfakih
+      sqlFile:
+        path: 016_create-table-post-comments.sql
+        relativeToChangelogFile: true
+        splitStatements: false
+        stripComments: false
+
+  - changeSet:
+      id: 017_create-table-post-comment-s3
+      author: ibnrasalfakih
+      sqlFile:
+        path: 017_create-table-post-comment-s3.sql
+        relativeToChangelogFile: true
+        splitStatements: false
+        stripComments: false
