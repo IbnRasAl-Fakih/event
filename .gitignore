@@ -36,5 +36,4 @@ temp/
 tmp/
 
 ### Local Configs (Секреты) ###
-src/main/resources/application.properties
 .env
