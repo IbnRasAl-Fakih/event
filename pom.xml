@@ -73,6 +73,11 @@
             <version>5.2.2</version>
             <scope>compile</scope>
         </dependency>
+        <!-- Spring Security для хэширования паролей -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security</artifactId>
+        </dependency>
     </dependencies>
 
     <build>

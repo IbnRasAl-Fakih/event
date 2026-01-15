@@ -13,11 +13,11 @@ import org.springframework.web.bind.annotation.RestController;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
+import kz.event.domain.user.DTO.UserDto;
 import kz.event.domain.user.entity.User;
-import kz.event.domain.user.enums.UserRole;
-import kz.event.domain.user.enums.UserStatus;
 import kz.event.domain.user.repository.UserRepository;
 import kz.event.domain.user.service.MailSenderService;
+import kz.event.domain.user.service.PasswordHashingService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -28,26 +28,25 @@ import lombok.extern.slf4j.Slf4j;
 public class UserController {
     private final UserRepository userRepository;
     private final MailSenderService mailSender;
+    private final PasswordHashingService passwordHasher;
 
     @PostMapping("/api/users/add")
-    public String addUser(@RequestBody User user) {
-        if (user.getEmail() == null || user.getPasswordHash() == null) {
+    public String addUser(@RequestBody UserDto userDto) {
+        if (userDto.getEmail() == null || userDto.getPassword() == null) {
             throw new IllegalArgumentException("Required arguments are null!");
         }
 
-        if (userRepository.existsByEmail(user.getEmail())) {
+        if (userRepository.existsByEmail(userDto.getEmail())) {
             throw new EntityExistsException("Email already registered!");
         }
         
-        user.setStatus(UserStatus.pending);
-        user.setRating(5.0);
-        user.setRole(UserRole.user);
+        User user = new User(userDto.getEmail(), userDto.getPhone(), passwordHasher.hash(userDto.getPassword()));
 
         try {
             mailSender.send(user.getEmail(), "Код подтверждения для входа в Event");
         } catch (Exception e) {
             log.error("Failed to send verification email to {}", user.getEmail(), e);
-            throw new IllegalStateException("Failed to send verification email", e);
+            throw new IllegalStateException("Failed to send verification email");
         }
 
         log.info("New user: " + userRepository.save(user));

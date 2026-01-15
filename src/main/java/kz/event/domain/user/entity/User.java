@@ -37,20 +37,30 @@ public class User {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private UserStatus status;
+    private UserStatus status = UserStatus.pending;
 
     @Column(nullable = false)
     private Double rating = 5.0;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private UserRole role;
+    private UserRole role = UserRole.user;
 
     @Column(name = "created_at", nullable = false, updatable = false, insertable = false)
     private OffsetDateTime createdAt;
 
     @Column(name = "updated_at", insertable = false)
     private OffsetDateTime updatedAt;
+
+    public User(String email, String phone, String passwordHash) {
+        this.email = email;
+        this.phone = phone;
+        this.passwordHash = passwordHash;
+    }
+    
+    public User() {
+
+    }
 
     @Override
     public String toString() {
