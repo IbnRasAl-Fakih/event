@@ -1,4 +1,4 @@
-package kz.event.domain.user.service;
+package kz.event.auth.service;
 
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -18,9 +18,11 @@ import java.security.SecureRandom;
 import java.time.Year;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class MailSenderService {
     private final JavaMailSender mailSender;
     private final Map<String, String> codes;
@@ -86,5 +88,13 @@ public class MailSenderService {
         try (var in = resource.getInputStream()) {
             return new String(in.readAllBytes(), StandardCharsets.UTF_8);
         }
+    }
+
+    public boolean codeCheck(String email, String code) {
+        return code.equals(codes.get(normalize(email)));
+    }
+
+    public void deleteCode(String email) {
+        codes.remove(email);
     }
 }

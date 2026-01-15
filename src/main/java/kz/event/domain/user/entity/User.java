@@ -14,12 +14,14 @@ import jakarta.persistence.Table;
 import kz.event.domain.user.enums.UserRole;
 import kz.event.domain.user.enums.UserStatus;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
 @Table(name = "users")
 @Getter
 @Setter
+@NoArgsConstructor
 public class User {
 
     @Id
@@ -56,10 +58,6 @@ public class User {
         this.email = email;
         this.phone = phone;
         this.passwordHash = passwordHash;
-    }
-    
-    public User() {
-
     }
 
     @Override

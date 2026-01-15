@@ -1,4 +1,4 @@
-package kz.event.domain.user.service;
+package kz.event.auth.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
