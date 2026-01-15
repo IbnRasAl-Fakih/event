@@ -5,5 +5,5 @@ import lombok.Data;
 @Data
 public class CodeCheckerDto {
     private String email;
-    private String password;
+    private String code;
 }

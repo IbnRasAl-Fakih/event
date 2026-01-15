@@ -1,5 +1,7 @@
 package kz.event.auth.controller;
 
+import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,6 +17,7 @@ import kz.event.auth.service.JwtService;
 import kz.event.auth.service.MailSenderService;
 import kz.event.auth.service.PasswordHashingService;
 import kz.event.domain.user.entity.User;
+import kz.event.domain.user.enums.UserStatus;
 import kz.event.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -49,7 +52,7 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public String register(@RequestBody RegisterDto registerDto) {
+    public ResponseEntity<?> register(@RequestBody RegisterDto registerDto) {
         if (registerDto.getEmail() == null || registerDto.getPassword() == null) {
             throw new IllegalArgumentException("Required arguments are null!");
         }
@@ -68,11 +71,26 @@ public class AuthController {
         }
 
         log.info("New user: " + userRepository.save(user));
-        return "User created successfully";
+        return ResponseEntity.ok("User created successfully");
     }
 
     @PostMapping("/check-code")
-    public boolean codeCheck(@RequestBody CodeCheckerDto codeCheckerDto) {
-        return mailSender.codeCheck(codeCheckerDto.getEmail(), codeCheckerDto.getPassword());
+    @Transactional
+    public ResponseEntity<?> codeCheck(@RequestBody CodeCheckerDto codeCheckerDto) {
+        if (codeCheckerDto.getEmail() == null || codeCheckerDto.getCode() == null) {
+            throw new IllegalArgumentException("Email and code are required");
+        }
+
+        if (!mailSender.codeCheck(codeCheckerDto.getEmail(), codeCheckerDto.getCode())) {
+            return ResponseEntity.badRequest().body("Invalid verification code");
+        }
+
+        User user = userRepository.findByEmail(codeCheckerDto.getEmail())
+                .orElseThrow(() -> new EntityNotFoundException("User not found"));
+
+        userRepository.updateStatus(user.getId(), UserStatus.active);
+        mailSender.deleteCode(codeCheckerDto.getEmail());
+        return ResponseEntity.ok("Email verified");
     }
 }
+
