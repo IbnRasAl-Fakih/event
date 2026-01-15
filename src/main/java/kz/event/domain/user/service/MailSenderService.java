@@ -1,6 +1,7 @@
 package kz.event.domain.user.service;
 
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
@@ -27,6 +28,9 @@ public class MailSenderService {
     @Value("${spring.mail.username}")
     private String from;
 
+    private static final Pattern EMAIL_PATTERN = Pattern.compile(
+            "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$"
+    );
 
     private String generateZeroPaddedCode() {
         SecureRandom random = new SecureRandom();
@@ -34,9 +38,30 @@ public class MailSenderService {
         return String.format("%06d", code);
     }
 
+    public static void validate(String email) {
+        if (email == null || email.isBlank()) {
+            throw new IllegalArgumentException("Email must not be empty");
+        }
+
+        if (email.length() > 255) {
+            throw new IllegalArgumentException("Email is too long");
+        }
+
+        if (!EMAIL_PATTERN.matcher(email).matches()) {
+            throw new IllegalArgumentException("Invalid email format");
+        }
+    }
+
+    public static String normalize(String email) {
+        return email.trim().toLowerCase();
+    }
+
     public void send(String to, String subject) throws MessagingException, IOException {
         String code = generateZeroPaddedCode();
-        codes.put(to, code);
+        String email = normalize(to);
+        validate(email);
+
+        codes.put(email, code);
 
         String html = loadTemplate("mail/templates/verification-code.html")
                 .replace("{{code}}", code)
@@ -46,7 +71,7 @@ public class MailSenderService {
         MimeMessage message = mailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
 
-        helper.setTo(to);
+        helper.setTo(email);
         helper.setSubject(subject);
         helper.setFrom(from);
         helper.setText(html, true);

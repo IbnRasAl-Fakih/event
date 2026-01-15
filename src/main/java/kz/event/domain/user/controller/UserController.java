@@ -44,7 +44,7 @@ public class UserController {
 
         try {
             mailSender.send(user.getEmail(), "Код подтверждения для входа в Event");
-        } catch (Exception e) {
+        } catch (jakarta.mail.MessagingException | java.io.IOException e) {
             log.error("Failed to send verification email to {}", user.getEmail(), e);
             throw new IllegalStateException("Failed to send verification email");
         }
