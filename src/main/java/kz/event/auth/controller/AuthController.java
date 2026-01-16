@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.validation.Valid;
 import kz.event.auth.DTO.CodeCheckerDto;
 import kz.event.auth.DTO.LoginRequestDto;
 import kz.event.auth.DTO.RegisterDto;
@@ -35,11 +36,7 @@ public class AuthController {
     private final PasswordHashingService passwordHasher;
 
     @PostMapping("/login")
-    public String login(@RequestBody LoginRequestDto request) {
-        if (request.getEmail() == null || request.getPassword() == null) {
-            throw new IllegalArgumentException("Email and password are required");
-        }
-
+    public String login(@Valid @RequestBody LoginRequestDto request) {
         User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new EntityNotFoundException("User not found"));
 
@@ -52,7 +49,7 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody RegisterDto registerDto) {
+    public ResponseEntity<?> register(@Valid @RequestBody RegisterDto registerDto) {
         if (userRepository.existsByEmail(registerDto.getEmail())) {
             throw new EntityExistsException("Email already registered!");
         }
@@ -70,13 +67,27 @@ public class AuthController {
         return ResponseEntity.ok("User created successfully");
     }
 
+    @PostMapping("/forgot-password")
+    public ResponseEntity<?> forgotPassword(@Valid @RequestBody RegisterDto registerDto) {
+        if (userRepository.existsByEmail(registerDto.getEmail())) {
+            throw new EntityNotFoundException("User not found");
+        }
+        
+        User user = new User(registerDto.getEmail());
+
+        try {
+            mailSender.send(user.getEmail(), "Код подтверждения для изменения пароля");
+        } catch (jakarta.mail.MessagingException | java.io.IOException e) {
+            log.error("Failed to send verification email to {}", user.getEmail(), e);
+            throw new IllegalStateException("Failed to send verification email");
+        }
+        
+        return ResponseEntity.ok("Code sent successfully");
+    }
+
     @PostMapping("/check-code")
     @Transactional
-    public ResponseEntity<?> codeCheck(@RequestBody CodeCheckerDto codeCheckerDto) {
-        if (codeCheckerDto.getEmail() == null || codeCheckerDto.getCode() == null) {
-            throw new IllegalArgumentException("Email and code are required");
-        }
-
+    public ResponseEntity<?> codeCheck(@Valid @RequestBody CodeCheckerDto codeCheckerDto) {
         if (!mailSender.codeCheck(codeCheckerDto.getEmail(), codeCheckerDto.getCode())) {
             return ResponseEntity.badRequest().body("Invalid verification code");
         }

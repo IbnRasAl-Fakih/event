@@ -33,3 +33,7 @@ mvn -version
    ~~~bash
    mvn spring-boot:run
    ~~~
+   Чтобы не спаршивал одобрение когда завершается:
+   ~~~bash
+   mvn spring-boot:run < nul
+   ~~~
