@@ -53,15 +53,11 @@ public class AuthController {
 
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody RegisterDto registerDto) {
-        if (registerDto.getEmail() == null || registerDto.getPassword() == null) {
-            throw new IllegalArgumentException("Required arguments are null!");
-        }
-
         if (userRepository.existsByEmail(registerDto.getEmail())) {
             throw new EntityExistsException("Email already registered!");
         }
         
-        User user = new User(registerDto.getEmail(), registerDto.getPhone(), passwordHasher.hash(registerDto.getPassword()));
+        User user = new User(registerDto.getEmail());
 
         try {
             mailSender.send(user.getEmail(), "Код подтверждения для входа в Event");
@@ -93,4 +89,3 @@ public class AuthController {
         return ResponseEntity.ok("Email verified");
     }
 }
-

@@ -54,10 +54,8 @@ public class User {
     @Column(name = "updated_at", insertable = false)
     private OffsetDateTime updatedAt;
 
-    public User(String email, String phone, String passwordHash) {
+    public User(String email) {
         this.email = email;
-        this.phone = phone;
-        this.passwordHash = passwordHash;
     }
 
     @Override
