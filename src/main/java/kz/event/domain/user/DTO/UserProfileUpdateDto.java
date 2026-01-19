@@ -7,10 +7,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 @Data
-public class UserProfileDto {
-    @NotBlank(message = "Username must not be empty")
-    private String username;
-
+public class UserProfileUpdateDto {
     @NotBlank(message = "Full name must not be empty")
     private String fullName;
 
@@ -23,7 +20,4 @@ public class UserProfileDto {
 
     @NotNull(message = "Birthdate must not be empty")
     private LocalDate birthdate;
-
-    @NotNull(message = "Sex must not be empty")
-    private String sex;
 }

@@ -56,6 +56,9 @@ public class User {
 
     public User(String email) {
         this.email = email;
+
+        // Сначала идет верификация почты, создается пользователь без пароля
+        this.passwordHash = email;
     }
 
     @Override

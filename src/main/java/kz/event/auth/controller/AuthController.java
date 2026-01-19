@@ -14,6 +14,7 @@ import jakarta.validation.Valid;
 import kz.event.auth.DTO.CodeCheckerDto;
 import kz.event.auth.DTO.LoginRequestDto;
 import kz.event.auth.DTO.RegisterDto;
+import kz.event.auth.DTO.SetPasswordDto;
 import kz.event.auth.service.JwtService;
 import kz.event.auth.service.MailSenderService;
 import kz.event.auth.service.PasswordHashingService;
@@ -49,12 +50,12 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<?> register(@Valid @RequestBody RegisterDto registerDto) {
-        if (userRepository.existsByEmail(registerDto.getEmail())) {
+    public ResponseEntity<?> register(@Valid @RequestBody RegisterDto dto) {
+        if (userRepository.existsByEmail(dto.getEmail())) {
             throw new EntityExistsException("Email already registered!");
         }
         
-        User user = new User(registerDto.getEmail());
+        User user = new User(dto.getEmail());
 
         try {
             mailSender.send(user.getEmail(), "Код подтверждения для входа в Event");
@@ -68,35 +69,50 @@ public class AuthController {
     }
 
     @PostMapping("/forgot-password")
-    public ResponseEntity<?> forgotPassword(@Valid @RequestBody RegisterDto registerDto) {
-        if (userRepository.existsByEmail(registerDto.getEmail())) {
+    public ResponseEntity<?> forgotPassword(@Valid @RequestBody RegisterDto dto) {
+        if (!userRepository.existsByEmail(dto.getEmail())) {
             throw new EntityNotFoundException("User not found");
         }
-        
-        User user = new User(registerDto.getEmail());
 
         try {
-            mailSender.send(user.getEmail(), "Код подтверждения для изменения пароля");
+            mailSender.send(dto.getEmail(), "Код подтверждения для изменения пароля");
         } catch (jakarta.mail.MessagingException | java.io.IOException e) {
-            log.error("Failed to send verification email to {}", user.getEmail(), e);
+            log.error("Failed to send verification email to {}", dto.getEmail(), e);
             throw new IllegalStateException("Failed to send verification email");
         }
         
         return ResponseEntity.ok("Code sent successfully");
     }
 
+    private void checkCode(String email, String code) {
+        if (!mailSender.codeCheck(email, code)) {
+            throw new IllegalArgumentException("Invalid verification code");
+        } else {
+            mailSender.deleteCode(email);
+        }
+    }
+
     @PostMapping("/check-code")
     @Transactional
-    public ResponseEntity<?> codeCheck(@Valid @RequestBody CodeCheckerDto codeCheckerDto) {
-        if (!mailSender.codeCheck(codeCheckerDto.getEmail(), codeCheckerDto.getCode())) {
-            return ResponseEntity.badRequest().body("Invalid verification code");
-        }
-
-        User user = userRepository.findByEmail(codeCheckerDto.getEmail())
+    public ResponseEntity<?> codeCheck(@Valid @RequestBody CodeCheckerDto dto) {
+        
+        User user = userRepository.findByEmail(dto.getEmail())
                 .orElseThrow(() -> new EntityNotFoundException("User not found"));
 
+        checkCode(dto.getEmail(), dto.getCode());
+
         userRepository.updateStatus(user.getId(), UserStatus.active);
-        mailSender.deleteCode(codeCheckerDto.getEmail());
         return ResponseEntity.ok("Email verified");
+    }
+
+    @PostMapping("/set-password")
+    @Transactional
+    public ResponseEntity<?> setPassword(@Valid @RequestBody SetPasswordDto dto) {
+        User user = userRepository.findByEmail(dto.getEmail())
+                .orElseThrow(() -> new EntityNotFoundException("User not found"));
+
+        userRepository.updatePassword(user.getId(), passwordHasher.hash(dto.getPassword()));
+
+        return ResponseEntity.ok("Password successfully set");
     }
 }

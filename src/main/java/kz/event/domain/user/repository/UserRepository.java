@@ -22,4 +22,8 @@ public interface UserRepository extends JpaRepository<User, UUID> {
     @Modifying
     @Query("update User u set u.status = :status where u.id = :id")
     int updateStatus(@Param("id") UUID id, @Param("status") UserStatus status);
+
+    @Modifying
+    @Query("update User u set u.passwordHash = :passwordHash where u.id = :id")
+    int updatePassword(@Param("id") UUID id, @Param("passwordHash") String passwordHash);
 }

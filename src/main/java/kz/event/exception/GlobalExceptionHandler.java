@@ -48,7 +48,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex) {
         String message = "Validation error";
         if (ex.getBindingResult().hasFieldErrors()) {
-            message = "Validation error" + ex.getBindingResult().getFieldErrors().get(0).getDefaultMessage();
+            message = "Validation error: " + ex.getBindingResult().getFieldErrors().get(0).getDefaultMessage();
         }
         Map<String, Object> body = new LinkedHashMap<>();
         body.put("timestamp", LocalDateTime.now());

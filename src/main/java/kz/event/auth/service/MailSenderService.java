@@ -1,7 +1,6 @@
 package kz.event.auth.service;
 
 import java.util.Map;
-import java.util.regex.Pattern;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
