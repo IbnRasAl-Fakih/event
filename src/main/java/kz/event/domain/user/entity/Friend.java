@@ -23,7 +23,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class Friends {
+public class Friend {
     
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -46,8 +46,14 @@ public class Friends {
     @Column(name = "updated_at", insertable = false)
     private OffsetDateTime updatedAt;
 
-    public Friends(UUID userId, UUID friendId) {
+    public Friend(UUID userId, UUID friendId) {
         this.userId = userId;
         this.friendId = friendId;
+    }
+
+    public Friend(UUID userId, UUID friendId, FriendStatus status) {
+        this.userId = userId;
+        this.friendId = friendId;
+        this.status = status;
     }
 }

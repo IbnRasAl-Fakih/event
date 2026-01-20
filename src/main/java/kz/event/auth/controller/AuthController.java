@@ -37,11 +37,11 @@ public class AuthController {
     private final PasswordHashingService passwordHasher;
 
     @PostMapping("/login")
-    public String login(@Valid @RequestBody LoginRequestDto request) {
-        User user = userRepository.findByEmail(request.getEmail())
+    public String login(@Valid @RequestBody LoginRequestDto dto) {
+        User user = userRepository.findByEmail(dto.getEmail())
                 .orElseThrow(() -> new EntityNotFoundException("User not found"));
 
-        if (!passwordHasher.matches(request.getPassword(), user.getPasswordHash())) {
+        if (!passwordHasher.matches(dto.getPassword(), user.getPasswordHash())) {
             throw new IllegalArgumentException("Invalid credentials");
         }
 
