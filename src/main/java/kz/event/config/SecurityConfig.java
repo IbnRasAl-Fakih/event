@@ -29,7 +29,8 @@ public class SecurityConfig {
                     .requestMatchers(
                             "/api/auth/register",
                             "/api/auth/check-code",
-                            "/api/auth/login"
+                            "/api/auth/login",
+                            "/api/user-profiles"
                     ).permitAll()
 
                     // Swagger

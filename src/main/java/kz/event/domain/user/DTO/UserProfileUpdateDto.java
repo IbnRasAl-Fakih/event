@@ -20,4 +20,6 @@ public class UserProfileUpdateDto {
 
     @NotNull(message = "Birthdate must not be empty")
     private LocalDate birthdate;
+
+    private String filename;
 }
