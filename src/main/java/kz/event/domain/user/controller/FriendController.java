@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -43,6 +44,7 @@ public class FriendController {
         }
     }
 
+    @Operation(summary = "Send friend request")
     @PostMapping
     public ResponseEntity<?> newFriend(@Valid @RequestBody FriendNewDto dto, @AuthenticationPrincipal UUID userId) {
         validate(userId);
@@ -116,5 +118,13 @@ public class FriendController {
     public List<Friend> getAllFriends(@AuthenticationPrincipal UUID userId) {
         validate(userId);
         return friendRepository.getAllFriends(userId);
+    }
+
+    @Operation(summary = "Get mutual friends between two users")
+    @GetMapping("/mutual-friends")
+    public List<UUID> getMutualFriends(@AuthenticationPrincipal UUID userId, @RequestParam UUID friendId) {
+        validate(userId);
+        validate(friendId);
+        return friendRepository.getMutualFriends(userId, friendId, FriendStatus.accepted);
     }
 }

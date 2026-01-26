@@ -1,0 +1,27 @@
+@startuml Uploading Avatar Photo
+skinparam Style strictuml
+skinparam SequenceMessageAlignment center
+
+actor Client
+boundary Server
+database S3
+database DB
+
+Client -> Server: /api/user-profiles (POST)
+Server -> DB: createUserProfile()
+DB --> Server: response
+Server -> S3: presignPut()
+S3 --> Server: uploadUrl
+Server --> Client: content_type, uploadUrl
+Client -> S3: upload photo
+Client -> Server: /api/user-profiles/confirm-avatar (POST)
+Server -> S3: head() // проверка что объект загрузился
+Server -> DB: key
+DB --> Server: response
+
+alt success
+  Server --> Client: 200
+else error
+  Server --> Client: 4xx/5xx
+end
+@enduml

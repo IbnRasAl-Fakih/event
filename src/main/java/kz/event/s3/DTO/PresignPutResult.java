@@ -6,8 +6,6 @@ import lombok.Value;
 @Value
 @Builder
 public class PresignPutResult {
-    String key;
     String contentType;
     String uploadUrl;
-    String publicUrl;
 }

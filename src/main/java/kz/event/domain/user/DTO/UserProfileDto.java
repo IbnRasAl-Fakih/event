@@ -26,4 +26,6 @@ public class UserProfileDto {
 
     @NotNull(message = "Sex must not be empty")
     private String sex;
+
+    private String filename;
 }

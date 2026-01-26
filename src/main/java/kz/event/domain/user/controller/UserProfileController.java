@@ -14,6 +14,7 @@ import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
@@ -50,6 +51,7 @@ public class UserProfileController {
         }
     }
 
+    @Operation(summary = "Add profile data")
     @PostMapping
     public ResponseEntity<?> addUserData(@Valid @RequestBody UserProfileDto dto, @AuthenticationPrincipal UUID userId) {
         if (!userRepository.existsById(userId)) {
@@ -62,9 +64,15 @@ public class UserProfileController {
 
         userProfileRepository.save(new UserProfile(userId, dto.getUsername(), dto.getFullName(), dto.getBio(), dto.getJob(), dto.getCity(), dto.getBirthdate(), getSex(dto.getSex())));
 
+        if (dto.getFilename() != null && !dto.getFilename().isBlank()) {
+            String dir = "avatars/" + userId;
+            return ResponseEntity.ok(s3Service.presignPut(dir, dto.getFilename()));
+        }
+
         return ResponseEntity.ok("User data saved successfully");
     }
 
+    @Operation(summary = "Update profile data")
     @PatchMapping
     @Transactional
     public ResponseEntity<?> updateUserData(@Valid @RequestBody UserProfileUpdateDto dto, @AuthenticationPrincipal UUID userId) {

@@ -46,22 +46,13 @@ public class S3PresignService {
         String uploadUrl = presigner.presignPutObject(presignReq).url().toString();
 
         return PresignPutResult.builder()
-                .key(key)
                 .contentType(contentType)
                 .uploadUrl(uploadUrl)
-                .publicUrl(buildPublicUrl(key))
                 .build();
     }
 
     private String detectContentTypeByName(String filename) {
         return tika.detect(filename == null ? "" : filename);
-    }
-
-    private String buildPublicUrl(String key) {
-        if (props.getPublicBaseUrl() == null || props.getPublicBaseUrl().isBlank()) return "";
-        String base = props.getPublicBaseUrl();
-        if (base.endsWith("/")) base = base.substring(0, base.length() - 1);
-        return base + "/" + key;
     }
 
     private String normalizeDir(String dir) {
